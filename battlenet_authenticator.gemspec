@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
   s.description = %q{Ruby implementation of the Battle.net Mobile Authenticator}
   s.license     = 'MIT'
 
+  s.required_ruby_version = '>= 2.0.0'
+
   if s.respond_to?(:add_development_dependency)
     s.add_development_dependency 'rake', '~> 0'
   end
