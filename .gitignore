@@ -1,0 +1,7 @@
+*.gem
+.bundle
+pkg/*
+.rvmrc
+.ruby-version
+.yardoc/*
+doc/

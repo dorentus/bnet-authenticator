@@ -1,0 +1,1 @@
+require 'battlenet_authenticator/battlenet_authenticator'
