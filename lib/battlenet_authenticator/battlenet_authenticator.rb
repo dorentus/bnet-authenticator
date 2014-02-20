@@ -4,7 +4,7 @@ require 'net/http'
 require 'battlenet_authenticator/refinements'
 require 'battlenet_authenticator/exceptions'
 
-using Refinements
+using BattlenetAuthenticator::Refinements
 
 class BattlenetAuthenticator
 
