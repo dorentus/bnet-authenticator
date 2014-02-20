@@ -9,13 +9,13 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["ZHANG Yi"]
   s.email       = ["zhangyi.cn@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/dorentus/battlenet_authenticator"
   s.summary     = %q{Battle.net Mobile Authenticator}
   s.description = %q{Ruby implementation of the Battle.net Mobile Authenticator}
   s.license     = 'MIT'
 
   if s.respond_to?(:add_development_dependency)
-    s.add_development_dependency "rake"
+    s.add_development_dependency 'rake', '~> 0'
   end
 
   s.files         = `git ls-files`.split("\n")
