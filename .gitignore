@@ -6,3 +6,4 @@ pkg/*
 .yardoc/*
 doc/
 *.swp
+.DS_Store

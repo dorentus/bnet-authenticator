@@ -1,4 +1,2 @@
-class BattlenetAuthenticator
-  class RequestFailed < StandardError; end
-  class InvalidSerial < StandardError; end
-end
+class RequestFailed < StandardError; end
+class InvalidSerial < StandardError; end
