@@ -1,6 +1,6 @@
 class BattlenetAuthenticator
 
-  class Refinements
+  module Refinements
 
     refine Array do
       def as_bytes_to_bin
