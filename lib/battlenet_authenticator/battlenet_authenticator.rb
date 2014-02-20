@@ -92,7 +92,9 @@ class BattlenetAuthenticator
 
   private
 
-  def self.request_new_serial(region, model = 'Motorola RAZR v3')
+  def self.request_new_serial(region, model = nil)
+    model ||= 'Motorola RAZR v3'
+
     # one-time key of 37 bytes
     k = create_one_time_pad(37)
 

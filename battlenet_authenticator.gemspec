@@ -14,15 +14,9 @@ Gem::Specification.new do |s|
   s.description = %q{Ruby implementation of the Battle.net Mobile Authenticator}
   s.license     = 'MIT'
 
-  #if s.respond_to?(:add_development_dependency)
-  #  s.add_development_dependency "rake"
-  #end
-
-  #dependencies = %w(digest/sha1 digest/hmac net/http)
-  #add_dependency_method = s.respond_to?(:add_runtime_dependency) ? s.method[:add_runtime_dependency] : s.method[:add_dependency]
-  #%w(digest/sha1 digest/hmac net/http).each do |dep|
-  #  add_dependency_method.call(dep)
-  #end
+  if s.respond_to?(:add_development_dependency)
+    s.add_development_dependency "rake"
+  end
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
