@@ -1,19 +1,19 @@
 require 'test/unit'
-require 'battlenet_authenticator'
+require 'bna/authenticator'
 
-class BattlenetAuthenticatorTest < Test::Unit::TestCase
+class Bna::AuthenticatorTest < Test::Unit::TestCase
   DEFAULT_SERIAL = 'CN-1402-1943-1283'
   DEFAULT_SECRET = '4202aa2182640745d8a807e0fe7e34b30c1edb23'
   DEFAULT_RSCODE = '4CKBN08QEB'
   DEFAULT_REGION = :CN
 
   def test_load
-    authenticator = BattlenetAuthenticator.new(:serial => DEFAULT_SERIAL, :secret => DEFAULT_SECRET)
+    authenticator = Bna::Authenticator.new(:serial => DEFAULT_SERIAL, :secret => DEFAULT_SECRET)
     is_default_authenticator authenticator
   end
 
   def test_request_new_serial
-    authenticator = BattlenetAuthenticator.new(:region => :US)
+    authenticator = Bna::Authenticator.new(:region => :US)
     assert_equal :US, authenticator.region
     assert_not_nil authenticator.serial
     assert_not_nil authenticator.secret
@@ -21,13 +21,13 @@ class BattlenetAuthenticatorTest < Test::Unit::TestCase
   end
 
   def test_restore
-    authenticator = BattlenetAuthenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
+    authenticator = Bna::Authenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
     is_default_authenticator authenticator
   end
 
   def test_request_server_time
     assert_nothing_raised do
-      BattlenetAuthenticator.request_server_time :EU
+      Bna::Authenticator.request_server_time :EU
     end
   end
 

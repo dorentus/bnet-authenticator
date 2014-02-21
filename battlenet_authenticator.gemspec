@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
 
-require 'battlenet_authenticator/version'
+require 'bna/version'
 
 Gem::Specification.new do |s|
   s.name       = "battlenet_authenticator"
-  s.version     = BattlenetAuthenticator::VERSION
+  s.version     = Bna::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["ZHANG Yi"]
   s.email       = ["zhangyi.cn@gmail.com"]

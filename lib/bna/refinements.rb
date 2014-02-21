@@ -1,4 +1,4 @@
-class BattlenetAuthenticator
+module Bna
 
   module Refinements
 
