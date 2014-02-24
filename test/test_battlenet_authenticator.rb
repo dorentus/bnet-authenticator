@@ -12,6 +12,43 @@ class Bna::AuthenticatorTest < Test::Unit::TestCase
     is_default_authenticator authenticator
   end
 
+  def test_argument_error
+    assert_raise ArgumentError do
+      Bna::Authenticator.new
+    end
+
+    assert_raise ArgumentError do
+      Bna::Authenticator.new(:serial => 'ABC')
+    end
+
+    assert_raise ArgumentError do
+      Bna::Authenticator.new(:region => 'SG')
+    end
+
+    assert_raise ArgumentError do
+      Bna::Authenticator.new(:restorecode => 'DDDD')
+    end
+  end
+
+  def test_request_new_serial
+    authenticator = Bna::Authenticator.new(:region => :US)
+    assert_equal :US, authenticator.region
+    assert_not_nil authenticator.serial
+    assert_not_nil authenticator.secret
+    assert_not_nil authenticator.restorecode
+  end
+
+  def test_restore
+    authenticator = Bna::Authenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
+    is_default_authenticator authenticator
+  end
+
+  def test_request_server_time
+    assert_nothing_raised do
+      Bna::Authenticator.request_server_time :EU
+    end
+  end
+
   private
 
   def is_default_authenticator(authenticator)

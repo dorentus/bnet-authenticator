@@ -1,2 +1,68 @@
 #!/usr/bin/env ruby
-require 'battlenet_authenticator'
+require 'optparse'
+require 'ostruct'
+require 'fileutils'
+require 'bna/authenticator'
+
+module Bna
+
+  COMMANDS = {}
+  %w(help new token info restore).each do |command|
+    require "bna/commands/#{command}"
+    COMMANDS[command.to_sym] = const_get("#{command.capitalize}Command").new
+  end
+
+  def self.parse_global_options(args)
+    parser = OptionParser.new do |opts|
+      opts.banner = "Usage: #{File.basename $0} <command>\n\n" +
+                    "Available commands:\n\n" +
+                    COMMANDS.values.reduce('') { |m, v| m += "#{v.help}\n" }
+    end
+
+    global_help_message = parser.help
+
+    parser.order!(args)
+
+    return args, global_help_message
+  end
+
+  def self.print_error(message)
+    prefix = 'Error'
+    if $stderr.tty?
+      prefix = "\e[4;31m#{prefix}\e[00m"
+    end
+    $stderr.puts "#{prefix}: #{message}"
+    $stderr.puts
+  end
+
+  begin
+    # parse global options
+    args, global_help_message = parse_global_options(ARGV)
+
+    # run command
+    command = args.shift || :help
+
+    raise Bna::BadCommand.new("invalid command #{command.to_s}") unless COMMANDS.has_key?(command.to_sym)
+
+    COMMANDS[command.to_sym].parse_and_run(args)
+  rescue Bna::BadCommand, OptionParser::InvalidOption => e
+    print_error e.message unless e.message.nil?
+
+    command = e.command
+    if COMMANDS.has_key? command
+      puts COMMANDS[command].help
+    else
+      puts global_help_message
+    end
+
+    if e.instance_of?(Bna::BadCommand) && e.message.nil?
+      exit 0
+    else
+      exit 1
+    end
+  rescue Errno::EACCES, Errno::ENOENT => e
+    print_error e.message
+    exit 1
+  end
+
+end
