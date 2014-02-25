@@ -14,7 +14,7 @@ module Bnet
 
   def self.parse_global_options(args)
     parser = OptionParser.new do |opts|
-      opts.banner = "Usage: #{File.basename $0} <command>\n\n" +
+      opts.banner = "Usage: #{File.basename $0} <command> [options] [params]\n\n" +
                     "Available commands:\n\n" +
                     COMMANDS.values.reduce('') { |m, v| m += "#{v.help}\n" }
     end
