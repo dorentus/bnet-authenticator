@@ -1,6 +1,6 @@
 module Bnet
 
-  module Supports
+  module Support
 
     module Array
 
@@ -51,13 +51,13 @@ module Bnet
 end
 
 class Array
-  include Bnet::Supports::Array
+  include Bnet::Support::Array
 end
 
 class Integer
-  include Bnet::Supports::Integer
+  include Bnet::Support::Integer
 end
 
 class String
-  include Bnet::Supports::String
+  include Bnet::Support::String
 end

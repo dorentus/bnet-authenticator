@@ -34,7 +34,7 @@ module Bnet
 
       begin
         run
-      rescue BadInputError, RequestFailedError => e
+      rescue Bnet::Authenticator::BadInputError, Bnet::Authenticator::RequestFailedError => e
         raise Bnet::InvalidCommandException.new(e.message, name.to_sym)
       end
     end

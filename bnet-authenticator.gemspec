@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
 
   if s.respond_to?(:add_development_dependency)
     s.add_development_dependency 'rake', '~> 0'
+    s.add_development_dependency 'yard'
   end
 
   s.files         = `git ls-files`.split("\n") - %w(.travis.yml .gitignore)
