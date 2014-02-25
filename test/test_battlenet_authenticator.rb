@@ -1,37 +1,37 @@
 require 'test/unit'
-require 'bna/authenticator'
+require 'bnet/authenticator'
 
-class Bna::AuthenticatorTest < Test::Unit::TestCase
+class Bnet::AuthenticatorTest < Test::Unit::TestCase
   DEFAULT_SERIAL = 'CN-1402-1943-1283'
   DEFAULT_SECRET = '4202aa2182640745d8a807e0fe7e34b30c1edb23'
   DEFAULT_RSCODE = '4CKBN08QEB'
   DEFAULT_REGION = :CN
 
   def test_load
-    authenticator = Bna::Authenticator.new(:serial => DEFAULT_SERIAL, :secret => DEFAULT_SECRET)
+    authenticator = Bnet::Authenticator.new(:serial => DEFAULT_SERIAL, :secret => DEFAULT_SECRET)
     is_default_authenticator authenticator
   end
 
   def test_argument_error
-    assert_raise ArgumentError do
-      Bna::Authenticator.new
+    assert_raise ::Bnet::BadInputError do
+      Bnet::Authenticator.new
     end
 
-    assert_raise ArgumentError do
-      Bna::Authenticator.new(:serial => 'ABC')
+    assert_raise ::Bnet::BadInputError do
+      Bnet::Authenticator.new(:serial => 'ABC')
     end
 
-    assert_raise ArgumentError do
-      Bna::Authenticator.new(:region => 'SG')
+    assert_raise ::Bnet::BadInputError do
+      Bnet::Authenticator.new(:region => 'SG')
     end
 
-    assert_raise ArgumentError do
-      Bna::Authenticator.new(:restorecode => 'DDDD')
+    assert_raise ::Bnet::BadInputError do
+      Bnet::Authenticator.new(:restorecode => 'DDDD')
     end
   end
 
   def test_request_new_serial
-    authenticator = Bna::Authenticator.new(:region => :US)
+    authenticator = Bnet::Authenticator.new(:region => :US)
     assert_equal :US, authenticator.region
     assert_not_nil authenticator.serial
     assert_not_nil authenticator.secret
@@ -39,13 +39,13 @@ class Bna::AuthenticatorTest < Test::Unit::TestCase
   end
 
   def test_restore
-    authenticator = Bna::Authenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
+    authenticator = Bnet::Authenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
     is_default_authenticator authenticator
   end
 
   def test_request_server_time
     assert_nothing_raised do
-      Bna::Authenticator.request_server_time :EU
+      Bnet::Authenticator.request_server_time :EU
     end
   end
 

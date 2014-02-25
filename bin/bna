@@ -2,14 +2,14 @@
 require 'optparse'
 require 'ostruct'
 require 'fileutils'
-require 'bna/authenticator'
+require 'bnet/authenticator'
 
-module Bna
+module Bnet
 
   COMMANDS = {}
   %w(help new token info restore).each do |command|
-    require "bna/commands/#{command}"
-    COMMANDS[command.to_sym] = const_get("#{command.capitalize}Command").new
+    require "bnet/commands/#{command}"
+    COMMANDS[command.to_sym] = Kernel.const_get('Bnet').const_get('Commands').const_get("#{command.capitalize}Command").new
   end
 
   def self.parse_global_options(args)
@@ -42,10 +42,10 @@ module Bna
     # run command
     command = args.shift || :help
 
-    raise Bna::BadCommand.new("invalid command #{command.to_s}") unless COMMANDS.has_key?(command.to_sym)
+    raise Bnet::InvalidCommandException.new("invalid command #{command.to_s}") unless COMMANDS.has_key?(command.to_sym)
 
     COMMANDS[command.to_sym].parse_and_run(args)
-  rescue Bna::BadCommand, OptionParser::InvalidOption => e
+  rescue Bnet::InvalidCommandException, OptionParser::InvalidOption => e
     print_error e.message unless e.message.nil?
 
     command = e.command
@@ -55,7 +55,7 @@ module Bna
       puts global_help_message
     end
 
-    if e.instance_of?(Bna::BadCommand) && e.message.nil?
+    if e.instance_of?(Bnet::InvalidCommandException) && e.message.nil?
       exit 0
     else
       exit 1

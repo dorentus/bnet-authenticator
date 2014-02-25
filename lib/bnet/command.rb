@@ -1,6 +1,6 @@
-module Bna
+module Bnet
 
-  class BadCommand < Exception
+  class InvalidCommandException < Exception
     attr_accessor :command
     attr_accessor :message
 
@@ -34,8 +34,8 @@ module Bna
 
       begin
         run
-      rescue ArgumentError => e
-        raise Bna::BadCommand.new(e.message, name.to_sym)
+      rescue BadInputError, RequestFailedError => e
+        raise Bnet::InvalidCommandException.new(e.message, name.to_sym)
       end
     end
 

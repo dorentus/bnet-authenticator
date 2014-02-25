@@ -1,27 +1,21 @@
 require 'digest/sha1'
 require 'digest/hmac'
 require 'net/http'
-require 'bna/refinements'
-require 'bna/exceptions'
+require 'bnet/supports'
 
-if RUBY_VERSION >= '2.0.0' && RUBY_VERSION < '2.1.0'
-  using Bna::Refinements
-end
+module Bnet
 
-module Bna
-
-  if RUBY_VERSION >= '2.1.0'
-    using Bna::Refinements
-  end
+  class RequestFailedError < StandardError; end
+  class BadInputError < StandardError; end
 
   class Authenticator
 
     RSA_MOD = 104890018807986556874007710914205443157030159668034197186125678960287470894290830530618284943118405110896322835449099433232093151168250152146023319326491587651685252774820340995950744075665455681760652136576493028733914892166700899109836291180881063097461175643998356321993663868233366705340758102567742483097
     RSA_KEY = 257
     AUTHENTICATOR_HOSTS = {
-      :CN => "mobile-service.battlenet.com.cn",
-      :EU => "m.eu.mobileservice.blizzard.com",
-      :US => "m.us.mobileservice.blizzard.com",
+        :CN => "mobile-service.battlenet.com.cn",
+        :EU => "m.eu.mobileservice.blizzard.com",
+        :US => "m.us.mobileservice.blizzard.com",
     }
     ENROLLMENT_REQUEST_PATH = '/enrollment/enroll.htm'
     TIME_REQUEST_PATH = '/enrollment/time.htm'
@@ -30,15 +24,15 @@ module Bna
 
     RESTORECODE_MAP = (0..32).reduce({}) do |memo, c|
       memo[c] = case
-      when c < 10 then c + 48
-      else
-        c += 55
-        c += 1 if c > 72  # S
-        c += 1 if c > 75  # O
-        c += 1 if c > 78  # L
-        c += 1 if c > 82  # I
-        c
-      end
+                  when c < 10 then c + 48
+                  else
+                    c += 55
+                    c += 1 if c > 72  # S
+                    c += 1 if c > 75  # O
+                    c += 1 if c > 78  # L
+                    c += 1 if c > 82  # I
+                    c
+                end
       memo
     end
     RESTORECODE_MAP_INVERSE = RESTORECODE_MAP.invert
@@ -58,7 +52,7 @@ module Bna
       elsif options.has_key?(:serial) && options.has_key?(:restorecode)
         @serial, @secret = self.class.request_restore(options[:serial], options[:restorecode])
       else
-        raise ArgumentError.new('invalid options')
+        raise BadInputError.new('invalid options')
       end
     end
 
@@ -106,7 +100,7 @@ module Bna
         http.request(request)
       end
 
-      raise RequestFailed.new("Error requesting server time: #{response.code}") if response.code.to_i(10) != 200
+      raise RequestFailedError.new("Error requesting server time: #{response.code}") if response.code.to_i(10) != 200
 
       response.body.as_bin_to_i.to_f / 1000.0
     end
@@ -136,13 +130,13 @@ module Bna
         if AUTHENTICATOR_HOSTS.has_key?(region) && normalized_serial =~ /\d{12}/
           options[:serial] = prettify_serial(normalized_serial)
         else
-          raise ArgumentError.new("bad serial #{options[:serial]}")
+          raise BadInputError.new("bad serial #{options[:serial]}")
         end
       end
 
       if options.has_key?(:region)
         region = options[:region].to_s.upcase.to_sym
-        raise ArgumentError.new("unsupported region #{region}") unless AUTHENTICATOR_HOSTS.has_key?(region)
+        raise BadInputError.new("unsupported region #{region}") unless AUTHENTICATOR_HOSTS.has_key?(region)
 
         options[:region] = region
       end
@@ -150,14 +144,14 @@ module Bna
       if options.has_key?(:restorecode)
         restorecode = options[:restorecode].upcase
 
-        raise ArgumentError.new("bad restoration code #{restorecode}") unless restorecode =~ /[0-9A-Z]{10}/
+        raise BadInputError.new("bad restoration code #{restorecode}") unless restorecode =~ /[0-9A-Z]{10}/
 
         options[:restorecode] = restorecode
       end
 
       if options.has_key?(:secret)
         secret = options[:secret]
-        raise ArgumentError.new("bad secret #{secret}") unless secret =~ /[0-9a-f]{40}/i
+        raise BadInputError.new("bad secret #{secret}") unless secret =~ /[0-9a-f]{40}/i
       end
 
       options
@@ -175,7 +169,7 @@ module Bna
       #   38 byte[2]  区域码: CN, US, EU, etc.
       #   40 byte[16] 设备模型数据(手机型号字符串，可随意)
       bytes = [1]
-      bytes.concat(k.bytes)
+      bytes.concat(k.bytes.to_a)
       bytes.concat(region.to_s.bytes.take(2))
       bytes.concat(model.ljust(16, "\0").bytes.take(16))
 
@@ -194,7 +188,7 @@ module Bna
       # server error
       #   note: server is unhappy with certain `k`s, such as:
       #     [206, 166, 17, 196, 68, 160, 142, 111, 216, 196, 170, 19, 49, 239, 101, 93, 114, 241, 57, 223, 150, 80, 219, 114, 95, 20, 42, 142, 193, 115, 79, 71, 189, 147, 242, 111, 27].as_bytes_to_bin
-      raise RequestFailed.new("Error requesting for new serial: #{response.code}") if response.code.to_i(10) != 200
+      raise RequestFailedError.new("Error requesting for new serial: #{response.code}") if response.code.to_i(10) != 200
 
       # the first 8 bytes be server timestamp in milliseconds
       # server_timestamp_in_ms = response.body[0, 8].as_bin_to_i
@@ -227,7 +221,7 @@ module Bna
         http.request(request)
       end
 
-      raise RequestFailed.new("Error requesting for restore (stage 1): #{response.code}") if response.code.to_i(10) != 200
+      raise RequestFailedError.new("Error requesting for restore (stage 1): #{response.code}") if response.code.to_i(10) != 200
 
       # stage 2
       challenge = response.body
@@ -249,7 +243,7 @@ module Bna
         http.request(request)
       end
 
-      raise RequestFailed.new("Error requesting for restore (stage 2): #{response.code}") if response.code.to_i(10) != 200
+      raise RequestFailedError.new("Error requesting for restore (stage 2): #{response.code}") if response.code.to_i(10) != 200
 
       secret = response.body.bytes.zip(key.bytes).reduce('') do |memo, pair|
         memo << (pair[0] ^ pair[1]).chr
