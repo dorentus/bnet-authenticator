@@ -41,19 +41,16 @@ module Bnet
     #
     # == Parameters:
     # options:
-    #   A `Hash`. Valid key combanations are:
+    #   A Hash. Valid key combanations are:
     #
-    #   - `:serial` & `:secret`
+    #   - :serial and :secret
+    #     Create a new authenticator with given serial and secret.
     #
-    #     Create a new authenticator with given `serial` and `secret`.
+    #   - :region
+    #     Request for a new authenticator using given region.
     #
-    #   - `:region`
-    #
-    #     Request for a new authenticator using given `region`
-    #
-    #   - `:serial` & `:restorecode`
-    #
-    #     Reqeust to restore an authenticator using given `serial` and `restorecode`
+    #   - :serial and :restorecode
+    #     Reqeust to restore an authenticator using given serial and restoration code.
     #
     def initialize(options = {})
       options = Core.normalize_options(options)
