@@ -2,7 +2,9 @@ Bnet::Authenticator
 ====
 Ruby implementation of the Battle.net Mobile Authenticator.
 
-[![Build Status](https://travis-ci.org/dorentus/bnet-authenticator.png?branch=master)](https://travis-ci.org/dorentus/bnet-authenticator)
+[![Gem Version](https://badge.fury.io/rb/bnet-authenticator.png)](http://badge.fury.io/rb/bnet-authenticator)
+
+[![Build Status](https://travis-ci.org/dorentus/bnet-authenticator.png?branch=master)](https://travis-ci.org/dorentus/bnet-authenticator) [![Dependency Status](https://gemnasium.com/dorentus/bnet-authenticator.png)](https://gemnasium.com/dorentus/bnet-authenticator) [![Coverage Status](https://coveralls.io/repos/dorentus/bnet-authenticator/badge.png)](https://coveralls.io/r/dorentus/bnet-authenticator)
 
 Installation
 ====
