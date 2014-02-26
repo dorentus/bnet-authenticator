@@ -9,3 +9,4 @@ doc/
 .DS_Store
 Gemfile.lock
 .idea
+coverage/*

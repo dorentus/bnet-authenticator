@@ -5,4 +5,12 @@ Rake::TestTask.new do |t|
 end
 
 desc "Run tests"
-task :default => :test
+
+if ENV["TRAVIS"] == "true"
+  require 'coveralls/rake/task'
+  Coveralls::RakeTask.new
+
+  task :default => [:test, 'coveralls:push']
+else
+  task :default => :test
+end

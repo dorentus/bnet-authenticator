@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear_merged!
+
 require 'test/unit'
 require 'bnet/authenticator'
 
