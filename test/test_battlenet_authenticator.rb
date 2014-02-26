@@ -13,19 +13,19 @@ class Bnet::AuthenticatorTest < Test::Unit::TestCase
   end
 
   def test_argument_error
-    assert_raise ::Bnet::BadInputError do
+    assert_raise ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new
     end
 
-    assert_raise ::Bnet::BadInputError do
+    assert_raise ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new(:serial => 'ABC')
     end
 
-    assert_raise ::Bnet::BadInputError do
+    assert_raise ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new(:region => 'SG')
     end
 
-    assert_raise ::Bnet::BadInputError do
+    assert_raise ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new(:restorecode => 'DDDD')
     end
   end

@@ -2,13 +2,11 @@ require 'digest/sha1'
 require 'digest/hmac'
 require 'net/http'
 require 'bnet/support'
+require 'bnet/authenticator/errors'
 
 module Bnet
 
   class Authenticator
-
-    class RequestFailedError < StandardError; end
-    class BadInputError < StandardError; end
 
     module Core
 
