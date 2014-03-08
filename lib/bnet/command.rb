@@ -1,6 +1,6 @@
 module Bnet
 
-  class InvalidCommandException < Exception
+  class InvalidCommandException < StandardError
     attr_accessor :command
     attr_accessor :message
 
