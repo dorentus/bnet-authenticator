@@ -41,10 +41,9 @@ module Bnet
         secret = normalize_options(:secret => secret)[:secret]
         return nil if secret.nil?
 
-        timestamp = Time.now.getutc.to_i if timestamp.nil?
+        timestamp ||= Time.now.getutc.to_i
 
         current = timestamp / 30
-        next_timestamp = (current + 1) * 30
 
         digest = Digest::HMAC.digest([current].pack('Q>'), secret.as_hex_to_bin, Digest::SHA1)
 
@@ -52,11 +51,19 @@ module Bnet
 
         token = '%08d' % (digest[start_position, 4].as_bin_to_i % 100000000)
 
-        return token, next_timestamp
+        return token, (current + 1) * 30
       end
 
       def self.normalize_serial(serial)
-        serial.to_s.gsub(/-/, '').upcase
+        normalized_serial = serial.to_s.gsub(/-/, '').upcase
+
+        if block_given?
+          region = extract_region(normalized_serial)
+          yield serial unless (AUTHENTICATOR_HOSTS.has_key?(region) && normalized_serial =~ /\d{12}/
+)
+        end
+
+        normalized_serial
       end
 
       def self.prettify_serial(serial)
@@ -64,41 +71,48 @@ module Bnet
         "#{serial[0, 2]}-" + serial[2, 12].scan(/.{4}/).join('-')
       end
 
+      def self.normalize_region(region)
+        normalized_region = region.to_s.upcase.to_sym
+
+        if block_given? && !AUTHENTICATOR_HOSTS.has_key?(normalized_region)
+          yield region
+        end
+
+        normalized_region
+      end
+
+      def self.normalize_restorecode(restorecode)
+        restorecode = restorecode.upcase
+
+        if block_given? && !(restorecode =~ /[0-9A-Z]{10}/)
+          yield restorecode
+        end
+
+        restorecode
+      end
+
+      def self.normalize_secret(secret)
+        if block_given? && !(secret =~ /[0-9a-f]{40}/i)
+          yield secret
+        end
+
+        secret
+      end
+
       private
 
       def self.normalize_options(options)
         return nil if options.nil?
 
-        if options.has_key?(:serial)
-          normalized_serial = normalize_serial(options[:serial])
-          region = extract_region(normalized_serial)
-
-          if AUTHENTICATOR_HOSTS.has_key?(region) && normalized_serial =~ /\d{12}/
-            options[:serial] = prettify_serial(normalized_serial)
-          else
-            raise BadInputError.new("bad serial #{options[:serial]}")
+        %w(serial region restorecode secret).each do |attr|
+          if options.has_key? attr.to_sym
+            options[attr.to_sym] = self.send "normalize_#{attr}".to_sym, options[attr.to_sym] do |value|
+              raise BadInputError.new("bad #{attr} #{value}")
+            end
           end
         end
 
-        if options.has_key?(:region)
-          region = options[:region].to_s.upcase.to_sym
-          raise BadInputError.new("unsupported region #{region}") unless AUTHENTICATOR_HOSTS.has_key?(region)
-
-          options[:region] = region
-        end
-
-        if options.has_key?(:restorecode)
-          restorecode = options[:restorecode].upcase
-
-          raise BadInputError.new("bad restoration code #{restorecode}") unless restorecode =~ /[0-9A-Z]{10}/
-
-          options[:restorecode] = restorecode
-        end
-
-        if options.has_key?(:secret)
-          secret = options[:secret]
-          raise BadInputError.new("bad secret #{secret}") unless secret =~ /[0-9a-f]{40}/i
-        end
+        options[:serial] = prettify_serial(options[:serial]) if options.has_key?(:serial)
 
         options
       end
