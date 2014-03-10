@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   if s.respond_to?(:add_development_dependency)
     s.add_development_dependency 'rake', '~> 0'
-    s.add_development_dependency 'minitest', '~> 0'
+    s.add_development_dependency 'minitest', '~> 5.0'
     s.add_development_dependency 'yard', '~> 0'
     s.add_development_dependency 'coveralls', '~> 0.7'
   end
