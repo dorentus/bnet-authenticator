@@ -126,9 +126,17 @@ module Bnet
         end.as_bytes_to_bin
       end
 
-      def self.request_new_serial(region, model = nil)
-        model ||= 'bn/authenticator'
+      def self.decrypt_response(text, key)
+        text.bytes.zip(key.bytes).reduce('') do |memo, pair|
+          memo + (pair[0] ^ pair[1]).chr
+        end
+      end
 
+      def self.rsa_encrypted(integer)
+        (integer ** RSA_KEY % RSA_MOD).to_bin
+      end
+
+      def self.prepair_serial_request(region, model)
         # one-time key of 37 bytes
         k = create_one_time_pad(37)
 
@@ -143,16 +151,22 @@ module Bnet
         bytes.concat(model.ljust(16, "\0").bytes.take(16))
 
         # encrypted using RSA
-        e = (bytes.as_bytes_to_i ** RSA_KEY % RSA_MOD).to_bin
+        e = rsa_encrypted(bytes.as_bytes_to_i)
+
+        return e, k
+      end
+
+      def self.request_new_serial(region, model = nil)
+        model ||= 'bn/authenticator'
+
+        e, k = prepair_serial_request(region, model)
 
         # request to server
         response_body = request_for('new serial', region, ENROLLMENT_REQUEST_PATH, e)
 
         # the first 8 bytes be server timestamp in milliseconds
         # the rest 37 bytes, to be XORed with `k`
-        decrypted = response_body[8, 37].bytes.zip(k.bytes).reduce('') do |memo, pair|
-          memo << (pair[0] ^ pair[1]).chr
-        end
+        decrypted = decrypt_response(response_body[8, 37], k)
 
         # now
         # the first 20 bytes be the authenticator secret
@@ -179,14 +193,11 @@ module Bnet
                                      Digest::SHA1)
 
         payload = serial_normalized
-        payload += ((digest+key).as_bin_to_i ** RSA_KEY % RSA_MOD).to_bin
-
+        payload += rsa_encrypted((digest + key).as_bin_to_i)
 
         response_body = request_for('restore (stage 2)', region, RESTORE_VALIDATE_REQUEST_PATH, payload)
 
-        secret = response_body.bytes.zip(key.bytes).reduce('') do |memo, pair|
-          memo << (pair[0] ^ pair[1]).chr
-        end.as_bin_to_hex
+        secret = decrypt_response(response_body, key).as_bin_to_hex
 
         return prettify_serial(serial), secret
       end
