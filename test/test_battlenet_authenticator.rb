@@ -1,10 +1,11 @@
 require 'coveralls'
 Coveralls.wear_merged!
 
-require 'test/unit'
+gem "minitest"
+require 'minitest/autorun'
 require 'bnet/authenticator'
 
-class Bnet::AuthenticatorTest < Test::Unit::TestCase
+class Bnet::AuthenticatorTest < Minitest::Test
   DEFAULT_SERIAL = 'CN-1402-1943-1283'
   DEFAULT_SECRET = '4202aa2182640745d8a807e0fe7e34b30c1edb23'
   DEFAULT_RSCODE = '4CKBN08QEB'
@@ -16,19 +17,19 @@ class Bnet::AuthenticatorTest < Test::Unit::TestCase
   end
 
   def test_argument_error
-    assert_raise ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new
     end
 
-    assert_raise ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new(:serial => 'ABC')
     end
 
-    assert_raise ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new(:region => 'SG')
     end
 
-    assert_raise ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::Authenticator::BadInputError do
       Bnet::Authenticator.new(:restorecode => 'DDDD')
     end
   end
@@ -37,9 +38,9 @@ class Bnet::AuthenticatorTest < Test::Unit::TestCase
     begin
       authenticator = Bnet::Authenticator.new(:region => :US)
       assert_equal :US, authenticator.region
-      assert_not_nil authenticator.serial
-      assert_not_nil authenticator.secret
-      assert_not_nil authenticator.restorecode
+      refute_nil authenticator.serial
+      refute_nil authenticator.secret
+      refute_nil authenticator.restorecode
     rescue Bnet::Authenticator::RequestFailedError
     end
   end
