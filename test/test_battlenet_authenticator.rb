@@ -41,7 +41,8 @@ class Bnet::AuthenticatorTest < Minitest::Test
       refute_nil authenticator.serial
       refute_nil authenticator.secret
       refute_nil authenticator.restorecode
-    rescue Bnet::Authenticator::RequestFailedError
+    rescue Bnet::Authenticator::RequestFailedError => e
+      puts e
     end
   end
 
@@ -49,14 +50,16 @@ class Bnet::AuthenticatorTest < Minitest::Test
     begin
       authenticator = Bnet::Authenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
       is_default_authenticator authenticator
-    rescue Bnet::Authenticator::RequestFailedError
+    rescue Bnet::Authenticator::RequestFailedError => e
+      puts e
     end
   end
 
   def test_request_server_time
     begin
       Bnet::Authenticator.request_server_time :EU
-    rescue Bnet::Authenticator::RequestFailedError
+    rescue Bnet::Authenticator::RequestFailedError => e
+      puts e
     end
   end
 

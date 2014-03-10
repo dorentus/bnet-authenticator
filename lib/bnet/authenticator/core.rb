@@ -146,24 +146,11 @@ module Bnet
         e = (bytes.as_bytes_to_i ** RSA_KEY % RSA_MOD).to_bin
 
         # request to server
-        request = Net::HTTP::Post.new(ENROLLMENT_REQUEST_PATH)
-        request.content_type = 'application/octet-stream'
-        request.body = e
-
-        response = Net::HTTP.new(AUTHENTICATOR_HOSTS[region]).start do |http|
-          http.request(request)
-        end
-
-        # server error
-        #   note: server is unhappy with certain `k`s, such as:
-        #     [206, 166, 17, 196, 68, 160, 142, 111, 216, 196, 170, 19, 49, 239, 101, 93, 114, 241, 57, 223, 150, 80, 219, 114, 95, 20, 42, 142, 193, 115, 79, 71, 189, 147, 242, 111, 27].as_bytes_to_bin
-        raise RequestFailedError.new("Error requesting for new serial: #{response.code}") if response.code.to_i(10) != 200
+        response_body = request_for('new serial', region, ENROLLMENT_REQUEST_PATH, e)
 
         # the first 8 bytes be server timestamp in milliseconds
-        # server_timestamp_in_ms = response.body[0, 8].as_bin_to_i
-
         # the rest 37 bytes, to be XORed with `k`
-        decrypted = response.body[8, 37].bytes.zip(k.bytes).reduce('') do |memo, pair|
+        decrypted = response_body[8, 37].bytes.zip(k.bytes).reduce('') do |memo, pair|
           memo << (pair[0] ^ pair[1]).chr
         end
 
@@ -182,19 +169,9 @@ module Bnet
         restorecode_bin = decode_restorecode(restorecode)
 
         # stage 1
-        request = Net::HTTP::Post.new(RESTORE_INIT_REQUEST_PATH)
-        request.content_type = 'application/octet-stream'
-        request.body = serial_normalized
-
-        response = Net::HTTP.new(AUTHENTICATOR_HOSTS[region]).start do |http|
-          http.request(request)
-        end
-
-        raise RequestFailedError.new("Error requesting for restore (stage 1): #{response.code}") if response.code.to_i(10) != 200
+        challenge = request_for('restore (stage 1)', region, RESTORE_INIT_REQUEST_PATH, serial_normalized)
 
         # stage 2
-        challenge = response.body
-
         key = create_one_time_pad(20)
 
         digest = Digest::HMAC.digest(serial_normalized + challenge,
@@ -204,17 +181,10 @@ module Bnet
         payload = serial_normalized
         payload += ((digest+key).as_bin_to_i ** RSA_KEY % RSA_MOD).to_bin
 
-        request = Net::HTTP::Post.new(RESTORE_VALIDATE_REQUEST_PATH)
-        request.content_type = 'application/octet-stream'
-        request.body = payload
 
-        response = Net::HTTP.new(AUTHENTICATOR_HOSTS[region]).start do |http|
-          http.request(request)
-        end
+        response_body = request_for('restore (stage 2)', region, RESTORE_VALIDATE_REQUEST_PATH, payload)
 
-        raise RequestFailedError.new("Error requesting for restore (stage 2): #{response.code}") if response.code.to_i(10) != 200
-
-        secret = response.body.bytes.zip(key.bytes).reduce('') do |memo, pair|
+        secret = response_body.bytes.zip(key.bytes).reduce('') do |memo, pair|
           memo << (pair[0] ^ pair[1]).chr
         end.as_bin_to_hex
 
@@ -222,16 +192,23 @@ module Bnet
       end
 
       def self.request_server_time(region)
-        request = Net::HTTP::Get.new(TIME_REQUEST_PATH)
+        request_for('server time', region, TIME_REQUEST_PATH).as_bin_to_i.to_f / 1000
+      end
+
+      def self.request_for(label, region, path, body = nil)
+        request = body.nil? ? Net::HTTP::Get.new(path) : Net::HTTP::Post.new(path)
         request.content_type = 'application/octet-stream'
+        request.body = body unless body.nil?
 
         response = Net::HTTP.new(AUTHENTICATOR_HOSTS[region]).start do |http|
-          http.request(request)
+          http.request request
         end
 
-        raise RequestFailedError.new("Error requesting server time: #{response.code}") if response.code.to_i(10) != 200
+        if response.code.to_i != 200
+          raise RequestFailedError.new("Error requesting #{label}: #{response.code}")
+        end
 
-        response.body.as_bin_to_i.to_f / 1000.0
+        response.body
       end
 
     end

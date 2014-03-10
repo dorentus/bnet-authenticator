@@ -17,9 +17,9 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9.3'
 
   if s.respond_to?(:add_development_dependency)
-    s.add_development_dependency 'rake', '~> 0'
+    s.add_development_dependency 'rake', '~> 10.1'
     s.add_development_dependency 'minitest', '~> 5.0'
-    s.add_development_dependency 'yard', '~> 0'
+    s.add_development_dependency 'yard', '~> 0.8'
     s.add_development_dependency 'coveralls', '~> 0.7'
   end
 
