@@ -2,7 +2,7 @@ require 'bnet/authenticator/core'
 
 module Bnet
 
-  # The battlenet authenticator
+  # The battle.net authenticator
   class Authenticator
 
     # @!attribute [r] serial
@@ -13,7 +13,7 @@ module Bnet
     #   @return [String] hexified secret of the authenticator
     attr_reader :secret
 
-    # @!attribute [r] restoration code
+    # @!attribute [r] restorecode
     #   @return [String] the restoration code of the authenticator
     attr_reader :restorecode
 
@@ -21,36 +21,27 @@ module Bnet
     #   @return [Symbol] the region of the authenticator
     attr_reader :region
 
-    # Get a new authenticator
+    # Create a new authenticator object
+    # @param options [Hash] read the examples for more infomation
     #
-    # == Example:
+    # == Examples:
+    #   >> # Create an authenticator object with given serial and secret
     #   >> Bnet::Authenticator.new(:serial => 'CN-1402-1943-1283', :secret => '4202aa2182640745d8a807e0fe7e34b30c1edb23')
     #   => Serial: CN-1402-1943-1283
     #   Secret: 4202aa2182640745d8a807e0fe7e34b30c1edb23
     #   Restoration Code: 4CKBN08QEB
     #
+    #   >> # Request server for a new authenticator
     #   >> Bnet::Authenticator.new(:region => :US)
     #   => Serial: US-1402-2552-9200
     #   Secret: c1307afe865735653d981771dff04ceb79b1a353
     #   Restoration Code: EQXCPB2YVE
     #
+    #   >> # Reqeust to restore an authenticator
     #   >> Bnet::Authenticator.new(:serial => 'CN-1402-1943-1283', :restorecode => '4CKBN08QEB')
     #   => Serial: CN-1402-1943-1283
     #   Secret: 4202aa2182640745d8a807e0fe7e34b30c1edb23
     #   Restoration Code: 4CKBN08QEB
-    #
-    # == Parameters:
-    # options:
-    #   A Hash. Valid key combanations are:
-    #
-    #   - :serial and :secret
-    #     Create a new authenticator with given serial and secret.
-    #
-    #   - :region
-    #     Request for a new authenticator using given region.
-    #
-    #   - :serial and :restorecode
-    #     Reqeust to restore an authenticator using given serial and restoration code.
     #
     def initialize(options = {})
       options = Core.normalize_options(options)
@@ -71,7 +62,7 @@ module Bnet
     def restorecode
       return nil if @serial.nil? or @secret.nil?
 
-      code_bin = Digest::SHA1.digest(normalized_serial + binary_secret).reverse[0, 10].reverse
+      code_bin = Digest::SHA1.digest(Core.normalize_serial(@serial) + @secret.as_hex_to_bin).reverse[0, 10].reverse
       Core.encode_restorecode(code_bin)
     end
 
@@ -81,31 +72,13 @@ module Bnet
       Core.extract_region(@serial)
     end
 
-    # Caculate token using this authenticator's `secret` and given `timestamp`
-    # (defaults to current time)
+    # Caculate token using this authenticator's secret and given timestamp
+    # (in seconds, defaults to current timestamp)
     #
     # @param timestamp [Integer] a UNIX timestamp in seconds
     # @return [String] current token
     def caculate_token(timestamp = nil)
       Core.caculate_token(@secret, timestamp)
-    end
-
-    # Caculate token using giving `secret` and given `timestamp`
-    # (defaults to current time)
-    #
-    # @param secret [String] hexified secret string of an authenticator
-    # @param timestamp [Integer] a UNIX timestamp in seconds
-    # @return [String] current token
-    def self.caculate_token(secret, timestamp = nil)
-      Core.caculate_token(secret, timestamp)
-    end
-
-    # Request for server timestamp
-    #
-    # @param region [Symbol]
-    # @return [Integer] server timestamp
-    def self.request_server_time(region)
-      Core.request_server_time(region)
     end
 
     # String representation of this authenticator
@@ -114,16 +87,22 @@ module Bnet
       "Serial: #{serial}\nSecret: #{secret}\nRestoration Code: #{restorecode}"
     end
 
-    private
-
-    def normalized_serial
-      Core.normalize_serial(@serial)
+    # Caculate token using given secret and timestamp
+    # (in seconds, defaults to current timestamp)
+    #
+    # @param secret [String] hexified secret string of an authenticator
+    # @param timestamp [Integer] a UNIX timestamp in seconds
+    # @return [String] current token
+    def self.caculate_token(secret, timestamp = nil)
+      Core.caculate_token(secret, timestamp)
     end
 
-    def binary_secret
-      return nil if @secret.nil?
-
-      @secret.as_hex_to_bin
+    # Get server's time
+    #
+    # @param region [Symbol]
+    # @return [Integer] server timestamp in seconds
+    def self.request_server_time(region)
+      Core.request_server_time(region)
     end
 
   end
