@@ -15,8 +15,7 @@ module Bnet
       end
 
       def run
-        serial = @args.shift
-        secret = @args.shift
+        serial, secret = @args.shift(2)
 
         authenticator = Authenticator.new(serial, secret)
         puts authenticator.to_readable_text

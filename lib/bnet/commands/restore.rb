@@ -15,8 +15,7 @@ module Bnet
       end
 
       def run
-        serial = @args.shift
-        restorecode = @args.shift
+        serial, restorecode = @args.shift(2)
 
         authenticator = Authenticator.restore_authenticator(serial, restorecode)
         puts authenticator.to_readable_text
