@@ -17,15 +17,15 @@ class Bnet::AuthenticatorTest < Minitest::Test
   end
 
   def test_argument_error
-    assert_raises ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::BadInputError do
       Bnet::Authenticator.new('ABC', '')
     end
 
-    assert_raises ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::BadInputError do
       Bnet::Authenticator.request_authenticator('SG')
     end
 
-    assert_raises ::Bnet::Authenticator::BadInputError do
+    assert_raises ::Bnet::BadInputError do
       Bnet::Authenticator.restore_authenticator('DDDD', 'EEE')
     end
   end
@@ -37,7 +37,7 @@ class Bnet::AuthenticatorTest < Minitest::Test
       refute_nil authenticator.serial
       refute_nil authenticator.secret
       refute_nil authenticator.restorecode
-    rescue Bnet::Authenticator::RequestFailedError => e
+    rescue Bnet::RequestFailedError => e
       puts e
     end
   end
@@ -46,7 +46,7 @@ class Bnet::AuthenticatorTest < Minitest::Test
     begin
       authenticator = Bnet::Authenticator.restore_authenticator(DEFAULT_SERIAL, DEFAULT_RSCODE)
       is_default_authenticator authenticator
-    rescue Bnet::Authenticator::RequestFailedError => e
+    rescue Bnet::RequestFailedError => e
       puts e
     end
   end
@@ -54,7 +54,7 @@ class Bnet::AuthenticatorTest < Minitest::Test
   def test_request_server_time
     begin
       Bnet::Authenticator.request_server_time :EU
-    rescue Bnet::Authenticator::RequestFailedError => e
+    rescue Bnet::RequestFailedError => e
       puts e
     end
   end
