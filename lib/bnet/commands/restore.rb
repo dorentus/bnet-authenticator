@@ -18,10 +18,7 @@ module Bnet
         serial = @args.shift
         restorecode = @args.shift
 
-        authenticator = Authenticator.new(
-          :serial => serial,
-          :restorecode => restorecode
-        )
+        authenticator = Authenticator.restore_authenticator(serial, restorecode)
         puts authenticator.to_s
       end
 

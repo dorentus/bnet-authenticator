@@ -12,31 +12,27 @@ class Bnet::AuthenticatorTest < Minitest::Test
   DEFAULT_REGION = :CN
 
   def test_load
-    authenticator = Bnet::Authenticator.new(:serial => DEFAULT_SERIAL, :secret => DEFAULT_SECRET)
+    authenticator = Bnet::Authenticator.new(DEFAULT_SERIAL, DEFAULT_SECRET)
     is_default_authenticator authenticator
   end
 
   def test_argument_error
     assert_raises ::Bnet::Authenticator::BadInputError do
-      Bnet::Authenticator.new
+      Bnet::Authenticator.new('ABC', '')
     end
 
     assert_raises ::Bnet::Authenticator::BadInputError do
-      Bnet::Authenticator.new(:serial => 'ABC')
+      Bnet::Authenticator.request_authenticator('SG')
     end
 
     assert_raises ::Bnet::Authenticator::BadInputError do
-      Bnet::Authenticator.new(:region => 'SG')
-    end
-
-    assert_raises ::Bnet::Authenticator::BadInputError do
-      Bnet::Authenticator.new(:restorecode => 'DDDD')
+      Bnet::Authenticator.restore_authenticator('DDDD', 'EEE')
     end
   end
 
   def test_request_new_serial
     begin
-      authenticator = Bnet::Authenticator.new(:region => :US)
+      authenticator = Bnet::Authenticator.request_authenticator(:US)
       assert_equal :US, authenticator.region
       refute_nil authenticator.serial
       refute_nil authenticator.secret
@@ -48,7 +44,7 @@ class Bnet::AuthenticatorTest < Minitest::Test
 
   def test_restore
     begin
-      authenticator = Bnet::Authenticator.new(:serial => DEFAULT_SERIAL, :restorecode => DEFAULT_RSCODE)
+      authenticator = Bnet::Authenticator.restore_authenticator(DEFAULT_SERIAL, DEFAULT_RSCODE)
       is_default_authenticator authenticator
     rescue Bnet::Authenticator::RequestFailedError => e
       puts e
@@ -70,8 +66,8 @@ class Bnet::AuthenticatorTest < Minitest::Test
     assert_equal DEFAULT_SERIAL, authenticator.serial
     assert_equal DEFAULT_SECRET, authenticator.secret
     assert_equal DEFAULT_RSCODE, authenticator.restorecode
-    assert_equal ['61459300', 1347279360], authenticator.caculate_token(1347279358)
-    assert_equal ['61459300', 1347279360], authenticator.caculate_token(1347279359)
-    assert_equal ['23423634', 1347279390], authenticator.caculate_token(1347279360)
+    assert_equal ['61459300', 1347279360], authenticator.get_token(1347279358)
+    assert_equal ['61459300', 1347279360], authenticator.get_token(1347279359)
+    assert_equal ['23423634', 1347279390], authenticator.get_token(1347279360)
   end
 end

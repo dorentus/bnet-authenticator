@@ -18,7 +18,7 @@ module Bnet
         region = args.shift || 'US'
         region = region.to_sym
 
-        authenticator = Authenticator.new(:region => region)
+        authenticator = Authenticator.request_authenticator(region)
         puts authenticator.to_s
       end
 

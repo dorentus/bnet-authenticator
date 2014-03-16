@@ -16,26 +16,26 @@ Using the library
 
 Request a new authenticator
 ----
-    >> authenticator = Bnet::Authenticator.new(:region => :US)
+    >> authenticator = Bnet::Authenticator.request_authenticator(:US)
     => Serial: US-1402-2552-9200
     Secret: c1307afe865735653d981771dff04ceb79b1a353
     Restoration Code: EQXCPB2YVE
 
 Get a token
 ----
-    >> authenticator.caculate_token
+    >> authenticator.get_token
     => 80185191
 
 Restore an authenticator from server
 ----
-    >> Bnet::Authenticator.new(:serial => 'CN-1402-1943-1283', :restorecode => '4CKBN08QEB')
+    >> Bnet::Authenticator.restore_authenticator('CN-1402-1943-1283', '4CKBN08QEB')
     => Serial: CN-1402-1943-1283
     Secret: 4202aa2182640745d8a807e0fe7e34b30c1edb23
     Restoration Code: 4CKBN08QEB
 
 Initialize an authenticator with given serial and secret
 ----
-    >> Bnet::Authenticator.new(:serial => 'CN-1402-1943-1283', :secret => '4202aa2182640745d8a807e0fe7e34b30c1edb23')
+    >> Bnet::Authenticator.new('CN-1402-1943-1283', '4202aa2182640745d8a807e0fe7e34b30c1edb23')
     => Serial: CN-1402-1943-1283
     Secret: 4202aa2182640745d8a807e0fe7e34b30c1edb23
     Restoration Code: 4CKBN08QEB

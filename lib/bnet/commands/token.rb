@@ -24,7 +24,7 @@ module Bnet
       def run
         secret = @args.shift
 
-        token, next_timestamp = Authenticator.caculate_token(secret)
+        token, next_timestamp = Authenticator.get_token(secret)
 
         puts token
         if @options.repeat
@@ -39,7 +39,7 @@ module Bnet
               next
             end
 
-            token, next_timestamp = Authenticator.caculate_token(secret)
+            token, next_timestamp = Authenticator.get_token(secret)
             puts token
           end
         end

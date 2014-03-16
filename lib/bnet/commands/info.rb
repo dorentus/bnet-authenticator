@@ -18,7 +18,7 @@ module Bnet
         serial = @args.shift
         secret = @args.shift
 
-        authenticator = Authenticator.new(:serial => serial, :secret => secret)
+        authenticator = Authenticator.new(serial, secret)
         puts authenticator.to_s
       end
 
