@@ -121,10 +121,20 @@ module Bnet
       self.class.get_token(@secret, timestamp)
     end
 
+    # Hash representation of this authenticator
+    # @return [Hash]
+    def to_hash
+      {
+        :serial => serial,
+        :secret => secret,
+        :restorecode => restorecode,
+      }
+    end
+
     # String representation of this authenticator
     # @return [String]
     def to_s
-      "Serial: #{serial}\nSecret: #{secret}\nRestoration Code: #{restorecode}"
+      to_hash.to_s
     end
 
     class << self

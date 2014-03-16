@@ -19,7 +19,7 @@ module Bnet
         region = region.to_sym
 
         authenticator = Authenticator.request_authenticator(region)
-        puts authenticator.to_s
+        puts authenticator.to_readable_text
       end
 
     end

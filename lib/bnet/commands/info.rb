@@ -19,7 +19,7 @@ module Bnet
         secret = @args.shift
 
         authenticator = Authenticator.new(serial, secret)
-        puts authenticator.to_s
+        puts authenticator.to_readable_text
       end
 
     end

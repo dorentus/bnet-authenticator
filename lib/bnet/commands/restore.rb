@@ -19,7 +19,7 @@ module Bnet
         restorecode = @args.shift
 
         authenticator = Authenticator.restore_authenticator(serial, restorecode)
-        puts authenticator.to_s
+        puts authenticator.to_readable_text
       end
 
     end

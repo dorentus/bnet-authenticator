@@ -1,5 +1,13 @@
 module Bnet
 
+  class Authenticator
+
+    def to_readable_text
+      "Serial: #{serial}\nSecret: #{secret}\nRestoration Code: #{restorecode}"
+    end
+
+  end
+
   class InvalidCommandException < StandardError
     attr_accessor :command
     attr_accessor :message
