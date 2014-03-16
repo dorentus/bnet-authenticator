@@ -1,10 +1,11 @@
 require 'bnet/errors'
-require 'bnet/authenticator/core'
+require 'bnet/authenticator_helper'
 
 module Bnet
 
   # The Battle.net authenticator
   class Authenticator
+    include AuthenticatorHelper
 
     # @!attribute [r] serial
     # @return [String] serial
