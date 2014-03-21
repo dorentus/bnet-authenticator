@@ -9,7 +9,9 @@ module Bnet
 
     # @!attribute [r] serial
     # @return [String] serial
-    attr_reader :serial
+    def serial
+      self.class.prettify_serial(@normalized_serial)
+    end
 
     # @!attribute [r] secret
     # @return [String] hexified secret
@@ -17,11 +19,16 @@ module Bnet
 
     # @!attribute [r] restorecode
     # @return [String] restoration code
-    attr_reader :restorecode
+    def restorecode
+      restorecode_bin = Digest::SHA1.digest(@normalized_serial + secret.as_hex_to_bin)
+      self.class.encode_restorecode(restorecode_bin.split(//).last(10).join)
+    end
 
     # @!attribute [r] region
     # @return [Symbol] region
-    attr_reader :region
+    def region
+      self.class.extract_region(@normalized_serial)
+    end
 
     # Create a new authenticator with given serial and secret
     # @param serial [String]
@@ -30,14 +37,8 @@ module Bnet
       raise BadInputError.new("bad serial #{serial}") unless self.class.is_valid_serial?(serial)
       raise BadInputError.new("bad secret #{secret}") unless self.class.is_valid_secret?(secret)
 
-      normalized_serial = self.class.normalize_serial(serial)
-
-      @serial = self.class.prettify_serial(normalized_serial)
+      @normalized_serial = self.class.normalize_serial(serial)
       @secret = secret
-      @region = self.class.extract_region(normalized_serial)
-
-      restorecode_bin = Digest::SHA1.digest(normalized_serial + secret.as_hex_to_bin)
-      @restorecode = self.class.encode_restorecode(restorecode_bin.split(//).last(10).join)
     end
 
     # Request a new authenticator from server
@@ -127,6 +128,7 @@ module Bnet
         :serial => serial,
         :secret => secret,
         :restorecode => restorecode,
+        :region => region,
       }
     end
 
