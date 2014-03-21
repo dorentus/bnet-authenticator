@@ -91,7 +91,8 @@ module Bnet
     # @param region [Symbol]
     # @return [Integer] server timestamp in seconds
     def self.request_server_time(region)
-      request_for('server time', region, TIME_REQUEST_PATH).as_bin_to_i.to_f / 1000
+      server_time_big_endian = request_for('server time', region, TIME_REQUEST_PATH)
+      server_time_big_endian.unpack('Q>')[0].to_f / 1000
     end
 
     # Get token from given secret and timestamp
@@ -105,9 +106,10 @@ module Bnet
       current = (timestamp || Time.now.getutc.to_i) / 30
       digest = Digest::HMAC.digest([current].pack('Q>'), secret.as_hex_to_bin, Digest::SHA1)
       start_position = digest[19].ord & 0xf
-      token = '%08d' % (digest[start_position, 4].as_bin_to_i % 100000000)
 
-      return token, (current + 1) * 30
+      token = digest[start_position, 4].unpack('L>')[0] & 0x7fffffff
+
+      return '%08d' % (token % 100000000), (current + 1) * 30
     end
 
     # Get authenticator's token from given timestamp

@@ -68,6 +68,6 @@ class Bnet::AuthenticatorTest < Minitest::Test
     assert_equal DEFAULT_RSCODE, authenticator.restorecode
     assert_equal ['61459300', 1347279360], authenticator.get_token(1347279358)
     assert_equal ['61459300', 1347279360], authenticator.get_token(1347279359)
-    assert_equal ['23423634', 1347279390], authenticator.get_token(1347279360)
+    assert_equal ['75939986', 1347279390], authenticator.get_token(1347279360)
   end
 end
