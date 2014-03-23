@@ -15,7 +15,7 @@ module Bnet
       end
 
       def run
-        region = (args.shift || 'US').to_sym
+        region = (args.shift || 'US').upcase.to_sym
 
         authenticator = Authenticator.request_authenticator(region)
         puts authenticator.to_readable_text

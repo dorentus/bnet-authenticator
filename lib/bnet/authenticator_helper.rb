@@ -66,8 +66,8 @@ module Bnet
           end
         end
 
-        def rsa_encrypted(integer)
-          (integer ** RSA_KEY % RSA_MOD).to_bin
+        def rsa_encrypt_bin(bin)
+          (bin.as_bin_to_i ** RSA_KEY % RSA_MOD).to_bin
         end
 
         def request_for(label, region, path, body = nil)

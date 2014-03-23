@@ -45,13 +45,12 @@ module Bnet
     # @param region [Symbol]
     # @return [Bnet::Authenticator]
     def self.request_authenticator(region)
-      region = region.to_s.upcase.to_sym
       raise BadInputError.new("bad region #{region}") unless is_valid_region?(region)
 
       k = create_one_time_pad(37)
 
       payload_plain = "\1" + k + region.to_s + CLIENT_MODEL.ljust(16, "\0")[0, 16]
-      e = rsa_encrypted(payload_plain.as_bin_to_i)
+      e = rsa_encrypt_bin(payload_plain)
 
       response_body = request_for('new serial', region, ENROLLMENT_REQUEST_PATH, e)
 
@@ -81,7 +80,7 @@ module Bnet
                                    decode_restorecode(restorecode),
                                    Digest::SHA1)
 
-      payload = normalized_serial + rsa_encrypted((digest + key).as_bin_to_i)
+      payload = normalized_serial + rsa_encrypt_bin(digest + key)
 
       response_body = request_for('restore (stage 2)', region, RESTORE_VALIDATE_REQUEST_PATH, payload)
 
@@ -92,6 +91,8 @@ module Bnet
     # @param region [Symbol]
     # @return [Integer] server timestamp in seconds
     def self.request_server_time(region)
+      raise BadInputError.new("bad region #{region}") unless is_valid_region?(region)
+
       server_time_big_endian = request_for('server time', region, TIME_REQUEST_PATH)
       server_time_big_endian.unpack('Q>')[0].to_f / 1000
     end
