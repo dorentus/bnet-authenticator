@@ -56,7 +56,7 @@ module Bnet
         def create_one_time_pad(length)
           (0..1.0/0.0).reduce('') do |memo, i|
             break memo if memo.length >= length
-            memo << Digest::SHA1.digest(rand().to_s)
+            memo << Digest::SHA1.hexdigest(rand().to_s)
           end[0, length]
         end
 
