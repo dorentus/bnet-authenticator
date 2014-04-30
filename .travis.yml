@@ -12,7 +12,6 @@ rvm:
 jdk:
   - openjdk7
   - openjdk6
-  - oraclejdk7
   - oraclejdk8
 
 matrix:
@@ -20,41 +19,29 @@ matrix:
     - rvm: 1.9.3
       jdk: openjdk6
     - rvm: 1.9.3
-      jdk: oraclejdk7
-    - rvm: 1.9.3
       jdk: oraclejdk8
 
     - rvm: 2.0.0
       jdk: openjdk6
     - rvm: 2.0.0
-      jdk: oraclejdk7
-    - rvm: 2.0.0
       jdk: oraclejdk8
 
     - rvm: 2.1.0
       jdk: openjdk6
-    - rvm: 2.1.0
-      jdk: oraclejdk7
     - rvm: 2.1.0
       jdk: oraclejdk8
 
     - rvm: 2.1.1
       jdk: openjdk6
-    - rvm: 2.1.1
-      jdk: oraclejdk7
     - rvm: 2.1.1
       jdk: oraclejdk8
 
     - rvm: ruby-head
       jdk: openjdk6
-    - rvm: ruby-head
-      jdk: oraclejdk7
     - rvm: ruby-head
       jdk: oraclejdk8
 
     - rvm: rbx
       jdk: openjdk6
-    - rvm: rbx
-      jdk: oraclejdk7
     - rvm: rbx
       jdk: oraclejdk8
