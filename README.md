@@ -3,8 +3,14 @@ Bnet::Authenticator
 Ruby implementation of the Battle.net Mobile Authenticator.
 
 [![Gem Version](http://img.shields.io/gem/v/bnet-authenticator.svg?style=flat)](http://badge.fury.io/rb/bnet-authenticator)
+[![Dependency Status](http://img.shields.io/gemnasium/dorentus/bnet-authenticator.svg?style=flat)](https://gemnasium.com/dorentus/bnet-authenticator)
 
-[![Build Status](http://img.shields.io/travis/dorentus/bnet-authenticator.svg?style=flat)](https://travis-ci.org/dorentus/bnet-authenticator) [![Dependency Status](http://img.shields.io/gemnasium/dorentus/bnet-authenticator.svg?style=flat)](https://gemnasium.com/dorentus/bnet-authenticator) [![Coverage Status](http://img.shields.io/coveralls/dorentus/bnet-authenticator.svg?style=flat)](https://coveralls.io/r/dorentus/bnet-authenticator) [![Code Climate](http://img.shields.io/codeclimate/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
+[![Build Status](http://img.shields.io/travis/dorentus/bnet-authenticator.svg?style=flat)](https://travis-ci.org/dorentus/bnet-authenticator)
+
+[![Coverage Status](http://img.shields.io/coveralls/dorentus/bnet-authenticator.svg?style=flat)](https://coveralls.io/r/dorentus/bnet-authenticator)
+
+[![Code Climate](http://img.shields.io/codeclimate/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
+[![Coverage Status from Code Climate](http://img.shields.io/codeclimate/coverage/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
 
 Installation
 ====
