@@ -21,21 +21,25 @@ class Bnet::AuthenticatorTest < Minitest::Test
 
   def test_argument_error
     assert_raises ::Bnet::BadInputError do
-      Bnet::Authenticator.new('ABC', '')
+      Bnet::Authenticator.new 'ABC', ''
     end
 
     assert_raises ::Bnet::BadInputError do
-      Bnet::Authenticator.request_authenticator('SG')
+      Bnet::Authenticator.new DEFAULT_SERIAL, 'ASDF'
     end
 
     assert_raises ::Bnet::BadInputError do
-      Bnet::Authenticator.restore_authenticator('DDDD', 'EEE')
+      Bnet::Authenticator.request_authenticator 'SG'
+    end
+
+    assert_raises ::Bnet::BadInputError do
+      Bnet::Authenticator.restore_authenticator 'DDDD', 'EEE'
     end
   end
 
   def test_request_new_serial
     begin
-      authenticator = Bnet::Authenticator.request_authenticator(:US)
+      authenticator = Bnet::Authenticator.request_authenticator :US
       assert_equal :US, authenticator.region
       refute_nil authenticator.serial
       refute_nil authenticator.secret
