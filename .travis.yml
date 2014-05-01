@@ -5,3 +5,7 @@ rvm:
   - 2.1.1
   - rbx
   - ruby-head
+addons:
+  code_climate:
+    repo_token:
+      secure: "598f94e6f7b5f95ed6c583038b985502c67432256ad7a68f2a5b37c5c468e1fd"
