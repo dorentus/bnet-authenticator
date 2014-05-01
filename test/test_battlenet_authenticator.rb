@@ -62,6 +62,10 @@ class Bnet::AuthenticatorTest < Minitest::Test
     end
   end
 
+  def test_bin
+    assert_equal true, system("ruby -Ilib bin/bna", :out => "/dev/null")
+  end
+
   private
 
   def is_default_authenticator(authenticator)
