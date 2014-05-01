@@ -1,3 +1,5 @@
+require 'digest/sha1'
+
 module Bnet
   module Attributes
     class Restorecode
@@ -9,8 +11,8 @@ module Bnet
           raise BadInputError.new("bad restoration code #{restorecode}") unless restorecode =~ /[0-9A-Z]{10}/
           @text = restorecode
         else
-          serial = if serial_or_restorecode.is_a? Serial then serial_or_restorecode else Serial.new serial_or_restorecode end
-          secret = Secret.new secret unless secret.is_a? Secret
+          serial = serial_or_restorecode.is_a?(Serial) ? serial_or_restorecode : Serial.new(serial_or_restorecode)
+          secret = Secret.new secret unless secret.is_a?(Secret)
 
           bin = Digest::SHA1.digest(serial.normalized + secret.binary)
 

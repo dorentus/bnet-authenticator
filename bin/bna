@@ -9,7 +9,7 @@ module Bnet
   COMMANDS = {}
   %w(help new token info restore).each do |command|
     require "bnet/commands/#{command}"
-    COMMANDS[command.to_sym] = Kernel.const_get('Bnet').const_get('Commands').const_get("#{command.capitalize}Command").new
+    COMMANDS[command.to_sym] = const_get("::Bnet::Commands::#{command.capitalize}Command").new
   end
 
   def self.parse_global_options(args)

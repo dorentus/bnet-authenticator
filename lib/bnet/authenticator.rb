@@ -1,6 +1,5 @@
 require 'bnet/errors'
 require 'bnet/constants'
-require 'digest/sha1'
 
 require 'bnet/attributes/serial'
 require 'bnet/attributes/secret'
@@ -15,35 +14,32 @@ module Bnet
 
     # @!attribute [r] serial
     # @return [String] serial
-    def serial
-      @serial.to_s
-    end
+    attr_reader :serial
 
     # @!attribute [r] secret
-    # @return [String] hexified secret
-    def secret
-      @secret.to_s
-    end
+    # @return [String] hexlified secret
+    attr_reader :secret
 
     # @!attribute [r] restorecode
     # @return [String] restoration code
-    def restorecode
-      @restorecode.to_s
-    end
+    attr_reader :restorecode
 
     # @!attribute [r] region
     # @return [Symbol] region
-    def region
-      @serial.region
-    end
+    attr_reader :region
 
     # Create a new authenticator with given serial and secret
     # @param serial [String]
     # @param secret [String]
     def initialize(serial, secret)
-      @serial = Bnet::Attributes::Serial.new serial
-      @secret = Bnet::Attributes::Secret.new secret
-      @restorecode = Bnet::Attributes::Restorecode.new @serial, @secret
+      serial = Bnet::Attributes::Serial.new serial
+      secret = Bnet::Attributes::Secret.new secret
+      restorecode = Bnet::Attributes::Restorecode.new serial, secret
+
+      @serial = serial.to_s
+      @secret = secret.to_s
+      @restorecode = restorecode.to_s
+      @region = serial.region
     end
 
     # Request a new authenticator from server
@@ -71,7 +67,10 @@ module Bnet
       restorecode = Bnet::Attributes::Restorecode.new restorecode
 
       # stage 1
-      challenge = request_for('restore (stage 1)', serial.region, RESTORE_INIT_REQUEST_PATH, serial.normalized)
+      challenge = request_for('restore (stage 1)',
+                              serial.region,
+                              RESTORE_INIT_REQUEST_PATH,
+                              serial.normalized)
 
       # stage 2
       key = create_one_time_pad(20)
@@ -82,7 +81,10 @@ module Bnet
 
       payload = serial.normalized + rsa_encrypt_bin(digest + key)
 
-      response_body = request_for('restore (stage 2)', serial.region, RESTORE_VALIDATE_REQUEST_PATH, payload)
+      response_body = request_for('restore (stage 2)',
+                                  serial.region,
+                                  RESTORE_VALIDATE_REQUEST_PATH,
+                                  payload)
 
       Authenticator.new(serial, decrypt_response(response_body, key))
     end
