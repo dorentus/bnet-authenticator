@@ -1,5 +1,4 @@
-Bnet::Authenticator
-====
+# Bnet::Authenticator
 Ruby implementation of the Battle.net Mobile Authenticator.
 
 [![Gem Version](http://img.shields.io/gem/v/bnet-authenticator.svg?style=flat)](http://badge.fury.io/rb/bnet-authenticator)
@@ -12,34 +11,39 @@ Ruby implementation of the Battle.net Mobile Authenticator.
 [![Code Climate](http://img.shields.io/codeclimate/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
 [![Coverage Status from Code Climate](http://img.shields.io/codeclimate/coverage/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
 
-Installation
-====
-    $ [sudo] gem install bnet-authenticator
+## Installation
+```bash
+$ [sudo] gem install bnet-authenticator
+```
 
-Using the library
-====
-    >> require 'bnet/authenticator'
+## Using the library
+```irb
+>> require 'bnet/authenticator'
+```
 
-Request a new authenticator
-----
-    >> authenticator = Bnet::Authenticator.request_authenticator(:US)
-    => #<Bnet::Authenticator:0x007f83599ae848 @serial="US-1403-1677-5336", @secret="33a107e6a2927a2aa1be99cfe7b2d08c092a7a2a", @region=:US, @restorecode="4YV9XZVNMX">
+### Request a new authenticator
+```irb
+>> authenticator = Bnet::Authenticator.request_authenticator(:US)
+=> {:serial=>"US-1405-0242-3258", :secret=>"778275450e5c3e092bc4fe901cd7c11241166c88", :restorecode=>"0WCRH9Z926", :region=>:US}
+```
 
-Get a token
-----
-    >> authenticator.get_token
-    => ["18338810", 1394965110]
+### Get a token
+```irb
+>> authenticator.get_token
+=> ["38530888", 1399038930]
+```
 
-Restore an authenticator from server
-----
-    >> Bnet::Authenticator.restore_authenticator('CN-1402-1943-1283', '4CKBN08QEB')
-    => #<Bnet::Authenticator:0x007f83599cf458 @serial="CN-1402-1943-1283", @secret="4202aa2182640745d8a807e0fe7e34b30c1edb23", @region=:CN, @restorecode="4CKBN08QEB">
+### Restore an authenticator from server
+```irb
+>> Bnet::Authenticator.restore_authenticator('CN-1402-1943-1283', '4CKBN08QEB')
+=> {:serial=>"CN-1402-1943-1283", :secret=>"4202aa2182640745d8a807e0fe7e34b30c1edb23", :restorecode=>"4CKBN08QEB", :region=>:CN}
+```
 
-Initialize an authenticator with given serial and secret
-----
-    >> Bnet::Authenticator.new('CN-1402-1943-1283', '4202aa2182640745d8a807e0fe7e34b30c1edb23')
-    => #<Bnet::Authenticator:0x007f8359a17500 @serial="CN-1402-1943-1283", @secret="4202aa2182640745d8a807e0fe7e34b30c1edb23", @region=:CN, @restorecode="4CKBN08QEB">
+### Initialize an authenticator with given serial and secret
+```irb
+>> Bnet::Authenticator.new('CN-1402-1943-1283', '4202aa2182640745d8a807e0fe7e34b30c1edb23')
+=> {:serial=>"CN-1402-1943-1283", :secret=>"4202aa2182640745d8a807e0fe7e34b30c1edb23", :restorecode=>"4CKBN08QEB", :region=>:CN}
+```
 
-Using the command-line tool
-====
+## Using the command-line tool
 Run `bna` and follow instructions.
