@@ -11,6 +11,8 @@ Ruby implementation of the Battle.net Mobile Authenticator.
 [![Code Climate](http://img.shields.io/codeclimate/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
 [![Coverage Status from Code Climate](http://img.shields.io/codeclimate/coverage/github/dorentus/bnet-authenticator.svg?style=flat)](https://codeclimate.com/github/dorentus/bnet-authenticator)
 
+<sub>FYI: Badge images provided by http://shields.io/</sub>
+
 ## Installation
 ```bash
 $ [sudo] gem install bnet-authenticator
