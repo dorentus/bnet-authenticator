@@ -26,7 +26,6 @@ module Bnet
 
         token, next_timestamp = Authenticator.get_token(secret)
 
-        puts token
         if @options.repeat
           interrupted = false
           trap("INT") { interrupted = true } # traps Ctrl-C
@@ -35,21 +34,22 @@ module Bnet
             sleep 1
 
             if Time.now.getutc.to_i < next_timestamp
-              print_countdown(next_timestamp - Time.now.getutc.to_i)
+              seconds = next_timestamp - Time.now.getutc.to_i
+              h, c = color_of(seconds)
+              puts "\e[s\e[%d;%dm\e[5m%02d\e[25m\t->\t%s\t<-\e[1A\e[0m\e[u" % [h, c, seconds, token]
               next
             end
 
             token, next_timestamp = Authenticator.get_token(secret)
-            puts token
           end
+        else
+          puts token
         end
       end
 
       private
 
-      def print_countdown(seconds, output = $stdout)
-        return unless output.tty?
-
+      def color_of(seconds)
         case
           when seconds > 25 then h, c = 1, 32
           when seconds > 20 then h, c = 0, 32
@@ -60,7 +60,7 @@ module Bnet
             h, c = 1, 31
         end
 
-        output.puts "\e[%d;%dm%02d\e[1A\e[0m" % [h, c, seconds]
+        [h, c]
       end
 
     end
