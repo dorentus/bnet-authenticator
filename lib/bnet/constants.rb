@@ -12,8 +12,8 @@ module Bnet
   RSA_KEY = 257
   AUTHENTICATOR_HOSTS = {
     :CN => "mobile-service.battlenet.com.cn",
-    :EU => "m.eu.mobileservice.blizzard.com",
-    :US => "m.us.mobileservice.blizzard.com",
+    :EU => "mobile-service.blizzard.com",
+    :US => "mobile-service.blizzard.com",
   }
   ENROLLMENT_REQUEST_PATH = '/enrollment/enroll.htm'
   TIME_REQUEST_PATH = '/enrollment/time.htm'
